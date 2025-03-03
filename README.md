@@ -16,3 +16,6 @@ curl -X GET "http://localhost:8080/links/123456"
 If I had more time:
 1. I would use a real DB and not in memory maps.
 2. Make this service work not just locally.
+
+Api responses: 
+https://github.com/orsaiag/AgamonHomeTask/blob/main/ResponseTypes.md

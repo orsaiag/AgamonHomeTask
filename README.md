@@ -9,8 +9,7 @@ In the command line - I'm writing this commands for windows (so if you have any 
 4. java -jar build/libs/AgamonHomeTask-1.0-SNAPSHOT-all.jar server config.yml
 
 Using cli: (windows)
-curl -X POST "http://localhost:8080/links" -H "Content-Type: application/json" --data-raw "
-{\"url\": \"https://github.com/orsaiag/AgamonHomeTask\"}"
+curl -X POST "http://localhost:8080/links" -H "Content-Type: application/json" --data-raw "{\"url\": \"https://github.com/orsaiag/AgamonHomeTask\"}"
 curl -X GET "http://localhost:8080/links/123456"
 
 **Types of responses:**

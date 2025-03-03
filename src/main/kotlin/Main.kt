@@ -14,7 +14,7 @@ import io.github.classgraph.ClassGraph
 import java.lang.reflect.Constructor
 
 
-class Main: Application<MainConfiguration>() {
+class Main : Application<MainConfiguration>() {
     override fun initialize(bootstrap: Bootstrap<MainConfiguration>) {
         bootstrap.objectMapper = createCustomObjectMapper()
     }
@@ -40,16 +40,15 @@ class Main: Application<MainConfiguration>() {
         }
     }
 
-    /**
-     * Finds and instantiates all controllers dynamically.
-     */
+
+    //Finds and instantiates all controllers dynamically.
     private fun findAndInstantiateControllers(): List<Any> {
         val controllers = mutableListOf<Any>()
 
         // Scan the "Controller" package to find all classes ending with "Controller"
         ClassGraph().enableClassInfo().whitelistPackages("controllers").scan().use { scanResult ->
             scanResult.allClasses
-                .filter { it.name.endsWith("Controller") } // Only controllers
+                .filter { it.name.endsWith("Controller") }
                 .forEach { classInfo ->
                     val clazz = Class.forName(classInfo.name)
                     val instance = instantiateWithDependencies(clazz)
@@ -60,9 +59,8 @@ class Main: Application<MainConfiguration>() {
         return controllers
     }
 
-    /**
-     * Instantiates a class dynamically by resolving its dependencies.
-     */
+
+    // Instantiates a class dynamically by resolving its dependencies.
     private fun instantiateWithDependencies(clazz: Class<*>): Any? {
         return try {
             val constructor: Constructor<*> = clazz.constructors.firstOrNull() ?: return null
@@ -74,9 +72,8 @@ class Main: Application<MainConfiguration>() {
         }
     }
 
-    /**
-     * Resolves dependencies dynamically using reflection.
-     */
+
+    // Resolves dependencies dynamically using reflection.
     private fun resolveDependencies(paramTypes: Array<Class<*>>): Array<Any> {
         return paramTypes.mapNotNull { paramType ->
             serviceRegistry[paramType] ?: instantiateWithDependencies(paramType)
@@ -85,13 +82,11 @@ class Main: Application<MainConfiguration>() {
 
     private val serviceRegistry: MutableMap<Class<*>, Any> = mutableMapOf()
 
-    /**
-     * Discovers all service classes and registers them automatically.
-     */
+    // Discovers all service classes and registers them automatically.
     private fun registerServices() {
         ClassGraph().enableClassInfo().whitelistPackages("services").scan().use { scanResult ->
             scanResult.allClasses
-                .filter { it.name.endsWith("Service") } // Only services
+                .filter { it.name.endsWith("Service") }
                 .forEach { classInfo ->
                     val clazz = Class.forName(classInfo.name)
                     val instance = instantiateWithDependencies(clazz)

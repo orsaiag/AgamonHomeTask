@@ -7,8 +7,9 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 import javax.ws.rs.BadRequestException
 
-class ScraperService() {
+class ScraperService {
     private val tasks = ConcurrentHashMap<Int, ScrapingTask>()
+    private val urlToTaskId = ConcurrentHashMap<String, Int>()
     private val executor = Executors.newFixedThreadPool(5)
 
 
@@ -28,12 +29,15 @@ class ScraperService() {
         if (url.isBlank()) {
             throw BadRequestException("URL parameter is required")
         } else {
+            urlToTaskId[url]?.let { existingTaskId ->
+                return existingTaskId
+            }
             val taskId = generateTaskId(url)
+            urlToTaskId[url] = taskId
             tasks[taskId] = ScrapingTask(status = Status.IN_PROGRESS)
 
             executor.submit {
                 try {
-                    Thread.sleep(10000)
                     val links = extractLinksFromUrl(url)
                     tasks[taskId] = ScrapingTask(status = Status.COMPLETED, links = links)
                 } catch (e: Exception) {

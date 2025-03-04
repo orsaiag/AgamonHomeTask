@@ -29,23 +29,28 @@ class ScraperService {
         if (url.isBlank()) {
             throw BadRequestException("URL parameter is required")
         } else {
-            urlToTaskId[url]?.let { existingTaskId ->
-                return existingTaskId
-            }
+            urlToTaskId[url]?.let { existingTaskId -> return existingTaskId }
             val taskId = generateTaskId(url)
-            urlToTaskId[url] = taskId
-            tasks[taskId] = ScrapingTask(status = Status.IN_PROGRESS)
-
-            executor.submit {
-                try {
-                    val links = extractLinksFromUrl(url)
-                    tasks[taskId] = ScrapingTask(status = Status.COMPLETED, links = links)
-                } catch (e: Exception) {
-                    tasks[taskId] = ScrapingTask(status = Status.FAILED, error = e.message)
-                }
-            }
+            createNewTask(url, taskId)
+            startScrapingJob(url, taskId)
 
             return taskId
+        }
+    }
+
+    private fun createNewTask(url: String, taskId: Int) {
+        urlToTaskId[url] = taskId
+        tasks[taskId] = ScrapingTask(status = Status.IN_PROGRESS)
+    }
+
+    private fun startScrapingJob(url: String, taskId: Int) {
+        executor.submit {
+            try {
+                val links = extractLinksFromUrl(url)
+                tasks[taskId] = ScrapingTask(status = Status.COMPLETED, links = links)
+            } catch (e: Exception) {
+                tasks[taskId] = ScrapingTask(status = Status.FAILED, error = e.message)
+            }
         }
     }
 

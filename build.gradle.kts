@@ -28,6 +28,7 @@ dependencies {
 
     // Testing
     testImplementation("io.dropwizard:dropwizard-testing:2.1.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
 }
 
 application {
@@ -53,5 +54,8 @@ tasks {
         archiveBaseName.set("AgamonHomeTask")
         archiveVersion.set("1.0-SNAPSHOT")
         archiveClassifier.set("all")
+    }
+    test {
+        useJUnitPlatform()
     }
 }
